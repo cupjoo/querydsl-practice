@@ -1,4 +1,4 @@
-package study.querydslpractice.entity;
+package study.querydslpractice.domain;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Test;
@@ -26,6 +26,7 @@ class MemberTest {
         QMember qMember = new QMember("m");
         Member findMember = query.selectFrom(qMember).fetchOne();
 
+        if (findMember == null) throw new AssertionError();
         assertEquals(findMember.getId(), member.getId());
     }
 }

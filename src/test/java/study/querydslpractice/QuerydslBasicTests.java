@@ -1,6 +1,7 @@
 package study.querydslpractice;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import study.querydslpractice.domain.QTeam;
 import study.querydslpractice.domain.Team;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import java.util.List;
 
@@ -27,6 +29,9 @@ class QuerydslBasicTest {
 
     @Autowired
     EntityManager em;
+
+    @Autowired
+    EntityManagerFactory emf;
 
     JPAQueryFactory queryFactory;
 
@@ -102,9 +107,37 @@ class QuerydslBasicTest {
                 .join(member.team, team)
                 .where(team.name.eq("teamA"))
                 .fetch();
+
         assertThat(result)
                 .extracting("username")
                 .containsExactly("member1", "member2");
+    }
+
+    @Test
+    public void join_on_filtering() throws Exception {
+        List<Tuple> result = queryFactory
+                .select(member, team)
+                .from(member)
+                .leftJoin(member.team, team).on(team.name.eq("teamA"))
+                .fetch();
+        for (Tuple tuple : result) {
+            System.out.println("tuple = " + tuple);
+        }
+    }
+
+    @Test
+    public void fetchJoinUse() throws Exception {
+        em.flush();
+        em.clear();
+        Member findMember = queryFactory
+                .selectFrom(member)
+                .join(member.team, team).fetchJoin()
+                .where(member.username.eq("member1"))
+                .fetchOne();
+
+        assert findMember != null;
+        assertThat(emf.getPersistenceUnitUtil().isLoaded(findMember.getTeam()))
+                .as("페치 조인 적용").isTrue();
     }
 
     @BeforeEach

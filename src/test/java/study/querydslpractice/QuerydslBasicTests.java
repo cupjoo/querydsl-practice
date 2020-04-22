@@ -16,10 +16,10 @@ import javax.persistence.EntityManager;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.*;
 import static study.querydslpractice.domain.QMember.*;
 import static study.querydslpractice.domain.QTeam.team;
+
 
 @SpringBootTest
 @Transactional
@@ -40,7 +40,7 @@ class QuerydslBasicTest {
                         member.age.between(10, 30))
                 .fetchOne();
         if (findMember == null) throw new AssertionError();
-        assertEquals(findMember.getUsername(), "member1");
+        assertThat(findMember.getUsername()).isEqualTo("member1");
     }
 
     @Test
@@ -50,11 +50,6 @@ class QuerydslBasicTest {
         List<Member> fetch = queryFactory
                 .selectFrom(member)
                 .fetch();
-
-        //단 건
-        Member findMember1 = queryFactory
-                .selectFrom(member)
-                .fetchOne();
 
         //처음 한 건 조회
         Member findMember2 = queryFactory
@@ -84,9 +79,9 @@ class QuerydslBasicTest {
                 .orderBy(member.age.desc(), member.username.asc().nullsLast())
                 .fetch();
 
-        assertEquals(result.get(0).getUsername(), "member5");
-        assertEquals(result.get(1).getUsername(), "member6");
-        assertNull(result.get(2).getUsername());
+        assertThat(result.get(0).getUsername()).isEqualTo("member5");
+        assertThat(result.get(1).getUsername()).isEqualTo("member6");
+        assertThat(result.get(2).getUsername()).isNull();
     }
 
     @Test
@@ -97,7 +92,7 @@ class QuerydslBasicTest {
                 .offset(1)
                 .limit(2)
                 .fetch();
-        assertEquals(result.size(), 2);
+        assertThat(result.size()).isEqualTo(2);
     }
 
     @Test

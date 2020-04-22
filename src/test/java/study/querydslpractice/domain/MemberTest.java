@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -27,6 +27,6 @@ class MemberTest {
         Member findMember = query.selectFrom(qMember).fetchOne();
 
         if (findMember == null) throw new AssertionError();
-        assertEquals(findMember.getId(), member.getId());
+        assertThat(findMember.getId()).isEqualTo(member.getId());
     }
 }

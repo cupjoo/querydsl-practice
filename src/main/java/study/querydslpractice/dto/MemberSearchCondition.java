@@ -3,7 +3,6 @@ package study.querydslpractice.dto;
 import lombok.Data;
 
 @Data
-
 public class MemberSearchCondition {
 
     //회원명, 팀명, 나이(ageGoe, ageLoe)
